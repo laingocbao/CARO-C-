@@ -1,8 +1,4 @@
-﻿#include "stdafx.h"
-#include <stdio.h>
-#include <iostream>
-#include <list>
-#include "Node.h"
+﻿#include "Node.h"
 #define ROWS 15
 #define NUMBER_WIN 5
 #define PLAYER_1 88	// mã X

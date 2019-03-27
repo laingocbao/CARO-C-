@@ -1,6 +1,4 @@
-﻿#include "stdafx.h"
-#include "Board.h"
-
+﻿#include "Board.h"
 
 Board::Board()
 {
@@ -42,17 +40,18 @@ void Board::getMovePlayer(char chessman) {
 	this->root->setCell(x, y, chessman);
 }
 
-void Board::getMoveComputer() {
+void Board::getMoveComputer(char chessman) {
 	int numberRow = this->root->getRow();
 	int alpha_max = numeric_limits<int>::min();
+	// cout << alpha_max << "\n";
 	Node *bestState = root;
 
 	if (numberRow == 3) {
-		list<Node *> states = generateStateTicTacToe(root, 'O');
+		list<Node *> states = generateStateTicTacToe(root, chessman);
 
 		//cout << "Cac trang thai duoc tao ra\n";
 		for (std::list<Node *>::iterator s = states.begin(); s != states.end(); s++) {
-			int result = abp_max((*s), 'X', 3, -numeric_limits<int>::max(), -numeric_limits<int>::min());
+			int result = abp_max((*s), chessman == 'O' ? 'X' : 'O', 3, -numeric_limits<int>::max(), -alpha_max);
 			/*(*s)->display();
 			cout << result << '\n';*/
 			if (alpha_max < result) {
@@ -65,17 +64,19 @@ void Board::getMoveComputer() {
 	}
 	else
 	{
-		list<Node *> states = generateStateCaro(root, 'O');
+		list<Node *> states = generateStateCaro(root, chessman);
 
 		//cout << "Cac trang thai duoc tao ra\n";
 		for (std::list<Node *>::iterator s = states.begin(); s != states.end(); s++) {
-			int result = abp_max((*s), 'X', 2, -numeric_limits<int>::max(), -numeric_limits<int>::min());
-			/*(*s)->display();
-			cout << result << '\n';*/
+			cout << alpha_max << "\n";
+			int result = -abp_max((*s), chessman == 'O' ? 'X' : 'O', 2, -numeric_limits<int>::max(), -alpha_max);
+			
+			(*s)->display();
 			if (alpha_max < result) {
 				alpha_max = result;
 				bestState = *s;
 			}
+			cout << "alpha = " << alpha_max <<"; " << "result = " << result << "\n";
 		}
 
 		this->root->setBoard(bestState->getBoard());
@@ -107,9 +108,8 @@ int Board::abp_max(Node *state, char chessman, int depth, int alpha, int beta) {
 		}
 
 		for (std::list<Node *>::iterator s = stateList.begin(); s != stateList.end(); s++) {
-			int alpha1 = beta * -1;
-			int beta1 = alpha * -1;
-			alpha = max(alpha, -abp_max((*s), chessman == 'O' ? 'X' : 'O', depth - 1, alpha1, beta1));			
+			
+			alpha = max(alpha, -abp_max((*s), chessman == 'O' ? 'X' : 'O', depth - 1, -beta, -alpha));			
 			if (alpha > beta) {
 				return alpha;
 			}
@@ -119,7 +119,7 @@ int Board::abp_max(Node *state, char chessman, int depth, int alpha, int beta) {
 	else
 	{
 		// Nếu chiều sâu bằng 0
-		if (depth == 0) {
+		if (depth == 0 || state->checkWinCaro(chessman)) {
 			return state->heuristicCaro(chessman);
 		}
 
@@ -127,19 +127,17 @@ int Board::abp_max(Node *state, char chessman, int depth, int alpha, int beta) {
 		list<Node *> stateList = generateStateCaro(state, chessman);
 
 		// Nếu state không thể phát sinh thêm bất kỳ state nào nữa
-		if (stateList.empty()) {
+		if (stateList.empty() ) {
 			return state->heuristicCaro(chessman);
 		}
 
 		for (std::list<Node *>::iterator s = stateList.begin(); s != stateList.end(); s++) {
-			int alpha1 = beta * -1;
-			int beta1 = alpha * -1;
-			alpha = max(alpha, -abp_max((*s), chessman == 'O' ? 'X' : 'O', depth - 1, alpha1, beta1));
-			(*s)->display();
-			cout << alpha << '\n';
+			alpha = max(alpha, -abp_max((*s), chessman == 'O' ? 'X' : 'O', depth - 1, -beta, -alpha));
+			// (*s)->display();
+			// cout << alpha << '\n';
 			if (alpha > beta) {
 				return alpha;
-			}
+			}			
 		}
 		return alpha;
 	}

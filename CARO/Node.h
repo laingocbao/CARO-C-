@@ -1,4 +1,9 @@
-#pragma once
+#ifndef NODE_H
+#define NODE_H
+
+#include <stdio.h>
+#include <iostream>
+#include <list>
 
 class Node
 {
@@ -21,4 +26,5 @@ public:
 	int heuristicTicTacToe(char chessman);
 	bool checkBoardFull();
 };
+#endif
 

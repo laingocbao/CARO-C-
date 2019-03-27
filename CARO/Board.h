@@ -1,4 +1,5 @@
-#pragma once
+#ifndef BOARD_H
+#define BOARD_H
 #include "Node.h"
 #include <stdio.h>
 #include <iostream>
@@ -20,7 +21,7 @@ public:
 	void displayBoard();
 	void setCell(int i, int j, char cell);
 	void getMovePlayer(char chessman);
-	void getMoveComputer();
+	void getMoveComputer(char chessman);
 	int max(int a, int b);
 	int min(int a, int b);
 	int abp_max(Node *state, char chessman, int depth, int alpha, int beta);
@@ -30,4 +31,4 @@ public:
 	bool checkWinCaro(char chessman);
 	bool checkWinTicTacToe(char chessman);
 };
-
+#endif
